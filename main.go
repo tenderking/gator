@@ -20,7 +20,7 @@ func main() {
 	}
 	// Initialize commands and register handlers
 	commands := &config.Commands{}
-	commands.Register("login", config.HandlerLogin)
+	commands.Register("login", HandlerLogin)
 	if len(os.Args) < 2 {
 		log.Fatalf("usage: gator <command> [<args>]")
 	}

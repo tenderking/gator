@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -14,15 +13,6 @@ type Config struct {
 }
 type State struct {
 	Config *Config
-}
-
-type Command struct {
-	Name string
-	Args []string
-}
-
-type Commands struct {
-	Handler map[string]func(*State, Command) error
 }
 
 const configFileName = ".gatorconfig.json"
@@ -78,30 +68,4 @@ func getConfigFilePath() (string, error) {
 	}
 	fullPath := filepath.Join(home, configFileName)
 	return fullPath, nil
-}
-
-func HandlerLogin(s *State, cmd Command) error {
-	if len(cmd.Args) != 1 {
-		log.Fatalf("usage: login <username>")
-	}
-	s.Config.CurrentUserName = cmd.Args[0]
-
-	fmt.Println("You are now logged in as", cmd.Args[0])
-
-	return nil
-}
-
-func (c *Commands) Register(name string, f func(*State, Command) error) {
-	if c.Handler == nil {
-		c.Handler = make(map[string]func(*State, Command) error)
-	}
-	c.Handler[name] = f
-}
-
-func (c *Commands) Run(s *State, cmd Command) error {
-	handler, ok := c.Handler[cmd.Name]
-	if !ok {
-		log.Fatalf("unknown command: %s", cmd.Name)
-	}
-	return handler(s, cmd)
 }
