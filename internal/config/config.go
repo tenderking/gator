@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"gator/internal/database"
 	"os"
 	"path/filepath"
 )
@@ -12,6 +13,7 @@ type Config struct {
 	CurrentUserName string `json:"current_user_name"`
 }
 type State struct {
+	Db     *database.Queries
 	Config *Config
 }
 

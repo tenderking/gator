@@ -1,10 +1,13 @@
 package main
 
 import (
-	"fmt"
+	"database/sql"
 	"gator/internal/config"
+	"gator/internal/database"
 	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -14,13 +17,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	dbURL := cfg.DBURL
+	db, err := sql.Open("postgres", dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	dbQueries := database.New(db)
 
 	configState := &config.State{
+		Db:     dbQueries,
 		Config: &cfg,
 	}
 	// Initialize commands and register handlers
 	commands := &config.Commands{}
 	commands.Register("login", HandlerLogin)
+	commands.Register("register", handlerRegister)
+	commands.Register("reset", handlerReset)
+	commands.Register("users", handlerGetUsers)
+	commands.Register("agg", handlerAgg)
 	if len(os.Args) < 2 {
 		log.Fatalf("usage: gator <command> [<args>]")
 	}
@@ -34,7 +49,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(cfg)
 
 }
