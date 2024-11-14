@@ -36,6 +36,12 @@ func main() {
 	commands.Register("reset", handlerReset)
 	commands.Register("users", handlerGetUsers)
 	commands.Register("agg", handlerAgg)
+	commands.Register("addfeed", middlewareLoggedIn(handlerAddFeed))
+	commands.Register("feeds", handlerGetFeeds)
+	commands.Register(("follow"), middlewareLoggedIn(handlerFollow))
+	commands.Register("following", middlewareLoggedIn(handlerFollowing))
+	commands.Register("unfollow", middlewareLoggedIn(handlerUnfollow))
+
 	if len(os.Args) < 2 {
 		log.Fatalf("usage: gator <command> [<args>]")
 	}
