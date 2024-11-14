@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"gator/internal/config"
+	"gator/internal/database"
 	"gator/internal/rss"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func handlerAgg(s *config.State, cmd config.Command) error {
@@ -44,7 +48,30 @@ func scrapeFeeds(s *config.State) error {
 		return fmt.Errorf("error fetching feed: %w", err)
 	}
 	for _, item := range f.Channel.Item {
-		fmt.Printf("Title: %+v\n", item.Title)
+
+		err := s.Db.CreatePost(
+			ctx,
+			database.CreatePostParams{
+				ID:          uuid.New(),
+				CreatedAt:   time.Now(),
+				UpdatedAt:   time.Now(),
+				Title:       item.Title,
+				Url:         item.Link,
+				Description: sql.NullString{String: item.Description, Valid: true},
+				PublishedAt: func() time.Time {
+					t, err := time.Parse(time.RFC1123, item.PubDate)
+					if err != nil {
+						return time.Time{}
+					}
+					return t
+				}(),
+				FeedID: uuid.NullUUID{UUID: feed.ID, Valid: true},
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("error creating post: %w", err)
+		}
+
 	}
 
 	return nil
