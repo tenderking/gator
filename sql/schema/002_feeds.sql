@@ -6,6 +6,8 @@ CREATE TABLE feeds (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     url VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL
+
 );
+
 -- +goose Down
-DROP TABLE feed;
+DROP TABLE feeds;
