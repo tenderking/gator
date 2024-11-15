@@ -17,3 +17,9 @@ vendor/
 # Go workspace file
 go.work
 
+# Binaries created by go build
+*.o
+*.a
+*.out
+gator
+

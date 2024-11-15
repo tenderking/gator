@@ -38,7 +38,7 @@ func main() {
 	commands.Register("agg", handlerAgg)
 	commands.Register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	commands.Register("feeds", handlerGetFeeds)
-	commands.Register(("follow"), middlewareLoggedIn(handlerFollow))
+	commands.Register("follow", middlewareLoggedIn(handlerFollow))
 	commands.Register("following", middlewareLoggedIn(handlerFollowing))
 	commands.Register("unfollow", middlewareLoggedIn(handlerUnfollow))
 	commands.Register("browse", middlewareLoggedIn(handlerBrowsePosts))

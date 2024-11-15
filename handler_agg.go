@@ -7,6 +7,8 @@ import (
 	"gator/internal/config"
 	"gator/internal/database"
 	"gator/internal/rss"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,7 +23,7 @@ func handlerAgg(s *config.State, cmd config.Command) error {
 	time_btw_reqs := cmd.Args[0]
 	timeBetweenRequests, err := time.ParseDuration(time_btw_reqs)
 	if err != nil {
-		return fmt.Errorf("error parsing time: %w. Please provide a valid duration string like 1s, 1m, 1h, etc.", err)
+		return fmt.Errorf("error parsing time: %w. Please provide a valid duration string like 1s, 1m, 1h, etc", err)
 	}
 
 	fmt.Println("Collecting feeds every", timeBetweenRequests)
@@ -69,7 +71,11 @@ func scrapeFeeds(s *config.State) error {
 			},
 		)
 		if err != nil {
-			return fmt.Errorf("error creating post: %w", err)
+			if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+				continue
+			}
+			log.Printf("Couldn't create post: %v", err)
+			continue
 		}
 
 	}
